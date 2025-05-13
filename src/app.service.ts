@@ -23,6 +23,10 @@ export class AppService {
   handleInterval() {
     this.logger.debug('Called every 10 seconds');
   }
+  // @Interval('notifications', 2500)
+  // handleInterva() {
+  //   this.logger.debug('Called every 2500 seconds');
+  // }
 
   @Timeout(5000)
   handleTimeout() {
@@ -71,9 +75,33 @@ export class AppService {
       this.logger.log(`job: ${key} -> next: ${next}`);
     });
   }
+  // Dynamic interval
+  getInterval() {
+    const interval = this.schedulerRegistry.getInterval('notifications');
+    clearInterval(interval);
+  }
 
-  // @Interval('notifications', 2500)
-  // handleInterva() {
-  //   this.logger.debug('Called every 2500 seconds');
-  // }
+  // create new interval
+  addInterval(name: string, milliseconds: number) {
+    const callback = () => {
+      this.logger.warn(`Interval ${name} executing at time (${milliseconds})!`);
+    };
+
+    const interval = setInterval(callback, milliseconds);
+    this.schedulerRegistry.addInterval(name, interval);
+  }
+
+  // delete interval
+  deleteInterval(name: string) {
+    this.schedulerRegistry.deleteInterval(name);
+    this.logger.warn(`Interval ${name} deleted!`);
+  }
+
+  // list intervals
+  getIntervals() {
+    const intervals = this.schedulerRegistry.getIntervals();
+    intervals.forEach(key => this.logger.log(`Interval: ${key}`));
+  }
+
+
 }
