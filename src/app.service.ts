@@ -103,5 +103,31 @@ export class AppService {
     intervals.forEach(key => this.logger.log(`Interval: ${key}`));
   }
 
+  // Dynamic timeout
+  dynamicTimeOut(){
+    const timeout = this.schedulerRegistry.getTimeout('notifications');
+    clearTimeout(timeout);
+  }
 
+  // create new timeout
+  addTimeout(name: string, milliseconds: number) {
+    const callback = () => {
+      this.logger.warn(`Timeout ${name} executing after (${milliseconds})!`);
+    };
+
+    const timeout = setTimeout(callback, milliseconds);
+    this.schedulerRegistry.addTimeout(name, timeout);
+  }
+
+  // delete timeout
+  deleteTimeout(name: string) {
+    this.schedulerRegistry.deleteTimeout(name);
+    this.logger.warn(`Timeout ${name} deleted!`);
+  }
+
+  // list timeout
+  getTimeouts() {
+    const timeouts = this.schedulerRegistry.getTimeouts();
+    timeouts.forEach(key => this.logger.log(`Timeout: ${key}`));
+  }
 }
